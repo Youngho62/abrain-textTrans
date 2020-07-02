@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
+          integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div style="float: left; padding-right: 100px" >
+    <p><textarea id="text" class="form-control" cols="50" rows="20"></textarea></p>
+    <button id="transBtn" type="button" class="btn btn-primary pull-right">변환</button>
+</div>
+<div style="float: left">
+    <div class="pb-30">
+        <a>주민등록번호</a>
+        <input type="text" class="form-control" id="id"  readonly>
+    </div>
+    <div>
+        <a>핸드폰번호</a>
+        <input type="text" class="form-control" id="phone"  readonly>
+    </div>
+    <div>
+        <p>이름</p>
+        <input type="text" class="form-control" id="name"  readonly>
+    </div>
+    <div>
+        <p>주소</p>
+        <input type="text" class="form-control" id="addr"  readonly>
+    </div>
+    <div>
+        <p>금액</p>
+        <input type="text" class="form-control" id="price"  readonly>
+    </div>
+    <div>
+        <a>사업자등록번호</a><br>
+        <a style="font-size: 13px; color: palevioletred" target="_blank" href="https://gs.saro.me/dev?page=3&tn=8">*맨마지막 검증번호까지 맞아야합니다.</a>
+        <input type="text" class="form-control" id="companyId"  readonly>
+    </div>
+    <div>
+        <p>가맹점번호</p>
+        <input type="text" class="form-control" id="companyNum"  readonly>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script th:inline="javascript">
+    $(document).ready(function(e){
+        $("#transBtn").click(function () {
+            var str=$("#text").val();
+            $.ajax({
+                url: '/trans',
+                data:{str:str},
+                type: 'get',
+                success: function(result){
+                    console.log(result);
+                    $("#id").val(result[0]);
+                    $("#phone").val(result[1]);
+                    $("#name").val(result[2]);
+                    $("#addr").val(result[3]);
+                    $("#price").val(result[4]);
+                    $("#companyId").val(result[5]);
+                    $("#companyNum").val(result[6]);
+                    }
+            }); //$.ajax
+
+        });
+    });
+
+</script>
+</body>
+</html>
