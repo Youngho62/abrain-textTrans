@@ -5,70 +5,173 @@
           integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
 
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>문자판독</title>
 </head>
 <body>
-<div style="float: left; padding-right: 100px" >
-    <p><textarea id="text" class="form-control" cols="50" rows="20"></textarea></p>
-    <button id="transBtn" type="button" class="btn btn-primary pull-right">변환</button>
-</div>
-<div style="float: left">
-    <div class="pb-30">
-        <a>주민등록번호</a>
-        <input type="text" class="form-control" id="id"  readonly>
-    </div>
-    <div>
-        <a>핸드폰번호</a>
-        <input type="text" class="form-control" id="phone"  readonly>
-    </div>
-    <div>
-        <p>이름</p>
-        <input type="text" class="form-control" id="name"  readonly>
-    </div>
-    <div>
-        <p>주소</p>
-        <input type="text" class="form-control" id="addr"  readonly>
-    </div>
-    <div>
-        <p>금액</p>
-        <input type="text" class="form-control" id="price"  readonly>
-    </div>
-    <div>
-        <a>사업자등록번호</a><br>
-        <a style="font-size: 13px; color: palevioletred" target="_blank" href="https://gs.saro.me/dev?page=3&tn=8">*맨마지막 검증번호까지 맞아야합니다.</a>
-        <input type="text" class="form-control" id="companyId"  readonly>
-    </div>
-    <div>
-        <p>가맹점번호</p>
-        <input type="text" class="form-control" id="companyNum"  readonly>
-    </div>
-</div>
+<div>
 
+    <div style="float: left; padding-right: 100px" >
+        <p><textarea id="text" class="form-control" cols="50" rows="20"></textarea></p>
+        <button id="transBtn" type="button" class="btn btn-primary">변환</button>
+    </div>
+    <div style="float: left; padding-right: 100px">
+        <div class="pb-30">
+            <a>주민등록번호</a>
+            <select class="form-control" id="id">
 
+            </select>
+        </div>
+        <div>
+            <a>핸드폰번호</a>
+            <select class="form-control" id="phone">
+
+            </select>
+        </div>
+        <div>
+            <p>이름</p>
+            <select class="form-control" id="name">
+
+            </select>
+        </div>
+        <div>
+            <p>주소</p>
+            <select class="form-control" id="addr">
+
+            </select>
+        </div>
+        <div>
+            <p>금액</p>
+            <select class="form-control" id="price">
+
+            </select>
+        </div>
+        <div>
+            <a>사업자등록번호</a><br>
+            <a style="font-size: 13px; color: palevioletred" target="_blank" href="https://gs.saro.me/dev?page=3&tn=8">*맨마지막 검증번호까지 맞아야합니다.</a>
+            <select class="form-control" id="companyId">
+
+            </select>
+        </div>
+        <div>
+            <p>가맹점번호</p>
+            <select class="form-control" id="companyNum">
+
+            </select>
+        </div>
+        <button id="saveBtn" type="button" class="btn btn-primary">저장</button>
+    </div>
+    <div style="float: left">
+        <table class="table table-bordered table-hover">
+            <thead>
+            <tr class="table-primary">
+                <th>번호</th>
+                <th>주민번호</th>
+                <th>핸드폰번호</th>
+                <th>이름</th>
+                <th>주소</th>
+                <th>금액</th>
+                <th>사업자번호</th>
+                <th>가맹점번호</th>
+            </tr>
+            </thead>
+            <tbody id="tbody">
+            <tr th:each="transText:${transText}">
+                <td>[[${transText.tno}]]</td>
+                <td>[[${transText.id}]]</td>
+                <td>[[${transText.phone}]]</td>
+                <td>[[${transText.name}]]</td>
+                <td>[[${transText.addr}]]</td>
+                <td>[[${transText.price}]]</td>
+                <td>[[${transText.companyId}]]</td>
+                <td>[[${transText.companyNum}]]</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="calendar-target" style="
+                width:300px;
+                border:1px solid #ccc;
+                border-radius: 5px;
+                padding: 5px;
+                overflow: hidden;">
+
+    </div>
+</div>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
 
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+
+
 <script th:inline="javascript">
     $(document).ready(function(e){
         $("#transBtn").click(function () {
             var str=$("#text").val();
+            var resultStr=["id","phone","name","addr","price","companyId","companyNum"];
+
+            for(var i=0; i<resultStr.length;i++){
+                $("#"+resultStr[i]+" option").remove();
+            }
+
             $.ajax({
                 url: '/trans',
                 data:{str:str},
-                type: 'get',
+                type: 'post',
                 success: function(result){
                     console.log(result);
-                    $("#id").val(result[0]);
-                    $("#phone").val(result[1]);
-                    $("#name").val(result[2]);
-                    $("#addr").val(result[3]);
-                    $("#price").val(result[4]);
-                    $("#companyId").val(result[5]);
-                    $("#companyNum").val(result[6]);
+                    for(var i=0; i<resultStr.length;i++){
+                        for(var j=0; j<result[i].length;j++){
+                            console.log(result[i].length);
+                            var op=new Option();
+                            op.value=result[i][j];
+                            op.text=result[i][j];
+                            document.getElementById(resultStr[i]).options.add(op);
+                        }
                     }
+                }
             }); //$.ajax
+
+        });
+        $("#saveBtn").click(function () {
+
+            var id=$("#id option:selected").val();
+            var phone=$("#phone option:selected").val();
+            var name=$("#name option:selected").val();
+            var addr=$("#addr option:selected").val();
+            var price=$("#price option:selected").val();
+            var companyId=$("#companyId option:selected").val();
+            var companyNum=$("#companyNum option:selected").val();
+
+            $.ajax({
+                url: '/save',
+                data: {id:id,phone:phone,name:name,addr:addr,price:price,companyId:companyId,companyNum:companyNum},
+                type: 'post',
+                success: function () {
+                    alert("저장완료");
+                    $.ajax({
+                        url: '/getList',
+                        type: 'get',
+                        success: function (result) {
+                            var str="";
+                            for(var i = 0; i < result.length; i++){
+                                var transText = result[i];
+                                str += "<tr>" +
+                                    "<td>"+ transText.tno+" </td>" +
+                                    "<td>"+ transText.id+" </td>" +
+                                    "<td>"+ transText.phone+" </td>" +
+                                    "<td>"+ transText.name+" </td>" +
+                                    "<td>"+ transText.addr+" </td>" +
+                                    "<td>"+ transText.price+" </td>" +
+                                    "<td>"+ transText.companyId+" </td>" +
+                                    "<td>"+ transText.companyNum+" </td>" +
+                                    "</tr>";
+                            }
+                            $("#tbody").html(str);
+                        }
+                    });
+                }
+            });
 
         });
     });

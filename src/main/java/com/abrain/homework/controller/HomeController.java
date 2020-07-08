@@ -1,78 +1,122 @@
 package com.abrain.homework.controller;
 
+import com.abrain.homework.domain.TransText;
+import com.abrain.homework.repository.TransTextRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 @Controller
 public class HomeController {
+    @Autowired
+    private TransTextRepository transTextRepository;
+
+
     @GetMapping("/")
-    public String index() {
+    public String index(Model model) {
+        List<TransText> result = new ArrayList<>();
+        transTextRepository.findAll().forEach(transText -> {
+            result.add(transText);
+        });
+        model.addAttribute("transText",result);
         return "/index";
     }
 
-    @GetMapping("/trans")
+    @PostMapping("/trans")
     @ResponseBody
-    public String[] trans(String str) {
+    public List<List<String>> trans(String str) {
         String[] arrStr = str.split("\\n");
-        String[] result = new String[7];
+        List<List<String>> result=new ArrayList<>();
+        List<String> resultId=new ArrayList<>();
+        List<String> resultPhone=new ArrayList<>();
+        List<String> resultName=new ArrayList<>();
+        List<String> resultAddr=new ArrayList<>();
+        List<String> resultPrice=new ArrayList<>();
+        List<String> resultComId=new ArrayList<>();
+        List<String> resultComNum=new ArrayList<>();
+
         String idExp = "^(?:[0-9]{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[1,2][0-9]|3[0,1]))-[1-4][0-9]{6}$";
         String phoneExp = "^01(?:0|1|[6-9])-?(\\d{3,4})-?(\\d{4})$";
         String nameExp = "^[가-힣]{2,4}$";
-        String addrExp= "^(([가-힣]+(시|도))( |)[가-힣]+(시|군|구)( |)([0-9가-힣\\s,.]*))$";
+        String addrExp= "^(([가-힣]+(시|도))( |)[가-힣]+(시|군|구)( |)(.|\\n)*)$";
         String priceExp = "^(-)?([1-9]([0-9]{0,2})?(,\\d{3})*|0)(\\.\\d+)?(원)?$";
         String companyId = "^[0-6][0-2][0-9]-?[0-9]{2}-?[0-9]{5}$";
         String companyNum ="^[0-9]{8}";
 
         for (int i = 0; i < arrStr.length; i++) {
             if (arrStr[i].matches(idExp)) {
-                result[0] = arrStr[i];
+                resultId.add(arrStr[i]);
             }
         }
-
+        result.add(resultId);
         for (int i = 0; i < arrStr.length; i++) {
             if (arrStr[i].matches(phoneExp)) {
-                result[1] = arrStr[i];
+                resultPhone.add(arrStr[i]);
             }
         }
+        result.add(resultPhone);
 
         for (int i = 0; i < arrStr.length; i++) {
             if (arrStr[i].matches(nameExp)) {
-                result[2] = arrStr[i];
+                resultName.add(arrStr[i]);
             }
         }
-
+        result.add(resultName);
         for (int i = 0; i < arrStr.length; i++) {
             if (arrStr[i].matches(addrExp)) {
-                result[3] = arrStr[i];
+                resultAddr.add(arrStr[i]);
             }
         }
-
+        result.add(resultAddr);
         for (int i = 0; i < arrStr.length; i++) {
             if (arrStr[i].matches(priceExp)) {
-                result[4] = arrStr[i];
+                resultPrice.add(arrStr[i]);
             }
         }
-
+        result.add(resultPrice);
         for (int i = 0; i < arrStr.length; i++) {
             if (arrStr[i].matches(companyId)) {
                 //사업자등록번호 조건이 맞아야 됨
                 if (ckBisNo(arrStr[i])) {
-                    result[5] = arrStr[i];
+                    resultComId.add(arrStr[i]);
                 }
             }
         }
-
+        result.add(resultComId);
         for (int i = 0; i < arrStr.length; i++) {
             if (arrStr[i].matches(companyNum)) {
-                result[6] = arrStr[i];
+                resultComNum.add(arrStr[i]);
             }
         }
 
+    result.add(resultComNum);
         return result;
     }
+
+    @PostMapping("/save")
+    @ResponseBody
+    public void save(TransText transText){
+        transTextRepository.save(transText);
+    }
+
+    @GetMapping("/getList")
+    @ResponseBody
+    public List<TransText> getList(){
+        List<TransText> result = new ArrayList<>();
+        transTextRepository.findAll().forEach(transText -> {
+            result.add(transText);
+        });
+        System.out.println(result);
+        return result;
+    }
+
 
     public boolean ckBisNo(String companyId) {
         companyId = companyId.replace("-", "");
